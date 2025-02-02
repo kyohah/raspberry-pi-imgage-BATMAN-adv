@@ -22,7 +22,9 @@ build {
 
   provisioner "shell-local" {
     inline = [
-      "sudo ./mitamae local -c /build/mitamae/main.rb --root ${var.img_mount_path}"
+      "curl -L https://github.com/itamae-kitchen/mitamae/releases/download/v1.14.2/mitamae-armhf-linux.tar.gz | tar xvz",
+      "mv mitamae-armhf-linux mitamae",
+      "sudo ./mitamae local -c /build/mitamae/recipe.rb --root ${var.img_mount_path}"
     ]
   }
 }

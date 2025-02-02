@@ -2,9 +2,9 @@ name: Build and Release Raspberry Pi Golden Image
 
 on:
   push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+  #   tags:
+  #     - 'v*'
+  # workflow_dispatch:
 
 jobs:
   build:
@@ -17,9 +17,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build Docker Image
-        run: docker build -t packer-raspberrypi-imager ./docker
-
       - name: Run Packer Build
         run: |
           mkdir -p packer_cache output-arm-image
@@ -27,7 +24,7 @@ jobs:
             -v "${{ github.workspace }}":/build:ro \
             -v "${{ github.workspace }}/packer_cache":/build/packer_cache \
             -v "${{ github.workspace }}/output-arm-image":/build/output-arm-image \
-            packer-raspberrypi-imager build /build/packer.hcl
+            hashicorp/packer:1.12 build /build/build.pkr.hcl
 
       - name: Create Release
         id: create_release
