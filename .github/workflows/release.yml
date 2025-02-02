@@ -2,9 +2,9 @@ name: Build and Release Raspberry Pi Golden Image
 
 on:
   push:
-  #   tags:
-  #     - 'v*'
-  # workflow_dispatch:
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:

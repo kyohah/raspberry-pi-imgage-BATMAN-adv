@@ -1,0 +1,34 @@
+digraph DroneMesh {
+  // レイアウト設定
+  rankdir=LR;
+  overlap=false;
+  splines=true;
+  node [fontname="Arial", fontsize=10];
+
+  // ノード定義
+  "Control Station" [shape=ellipse, style=filled, fillcolor=lightblue, label="Control Station"];
+  "Relay Drone 1" [shape=ellipse, style=filled, fillcolor=lightgreen, label="Relay Drone 1"];
+  "Relay Drone 2" [shape=ellipse, style=filled, fillcolor=lightgreen, label="Relay Drone 2"];
+  "Relay Drone 3" [shape=ellipse, style=filled, fillcolor=lightgreen, label="Relay Drone 3"];
+  "Relay Drone 4" [shape=ellipse, style=filled, fillcolor=lightgreen, label="Relay Drone 4"];
+  "Operation Drone" [shape=ellipse, style=filled, fillcolor=orange, label="Operation Drone"];
+
+  // 地上局から各中継ドローンへ
+  "Control Station" -> "Relay Drone 1" [label="batman-adv", color=blue];
+  "Control Station" -> "Relay Drone 2" [label="batman-adv", color=blue];
+  "Control Station" -> "Relay Drone 3" [label="batman-adv", color=blue];
+  "Control Station" -> "Relay Drone 4" [label="batman-adv", color=blue];
+
+  // 中継ドローン同士のメッシュ接続
+  "Relay Drone 1" -> "Relay Drone 2" [label="batman-adv", color=green];
+  "Relay Drone 2" -> "Relay Drone 3" [label="batman-adv", color=green];
+  "Relay Drone 3" -> "Relay Drone 4" [label="batman-adv", color=green];
+  "Relay Drone 4" -> "Relay Drone 1" [label="batman-adv", color=green];
+  // 補完的なクロスリンク
+  "Relay Drone 1" -> "Relay Drone 3" [style=dashed, label="batman-adv", color=green];
+  "Relay Drone 2" -> "Relay Drone 4" [style=dashed, label="batman-adv", color=green];
+
+  // 操作対象ドローンへ（複数の中継ドローンから到達可能）
+  "Relay Drone 2" -> "Operation Drone" [label="batman-adv", color=red];
+  "Relay Drone 3" -> "Operation Drone" [label="batman-adv", color=red];
+}
