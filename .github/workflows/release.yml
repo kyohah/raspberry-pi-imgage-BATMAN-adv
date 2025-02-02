@@ -1,0 +1,46 @@
+name: Build and Release Raspberry Pi Golden Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image
+        run: docker build -t packer-raspberrypi-imager ./docker
+
+      - name: Run Packer Build
+        run: |
+          mkdir -p packer_cache output-arm-image
+          docker run --rm --privileged \
+            -v "${{ github.workspace }}":/build:ro \
+            -v "${{ github.workspace }}/packer_cache":/build/packer_cache \
+            -v "${{ github.workspace }}/output-arm-image":/build/output-arm-image \
+            packer-raspberrypi-imager build /build/packer.hcl
+
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: "Raspberry Pi Golden Image - ${{ github.ref_name }}"
+          body: "Raspberry Pi Golden Image built with packer and mitamae."
+          draft: false
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: output-arm-image/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
