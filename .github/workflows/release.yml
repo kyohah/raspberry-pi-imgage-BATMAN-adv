@@ -20,12 +20,14 @@ jobs:
       - name: Run Packer Build
         run: |
           mkdir -p packer_cache output-arm-image
-          docker run --rm --privileged \
-            -v "${{ github.workspace }}":/build:ro \
-            -v "${{ github.workspace }}/packer_cache":/build/packer_cache \
-            -v "${{ github.workspace }}/output-arm-image":/build/output-arm-image \
-            hashicorp/packer:1.12 build /build/build.pkr.hcl
-
+          docker run \
+            --rm \
+            --privileged \
+            -v /dev:/dev \
+            -v ${PWD}:/build:ro \
+            -v ${PWD}/packer_cache:/build/packer_cache \
+            -v ${PWD}/output-arm-image:/build/output-arm-image \
+            ghcr.io/solo-io/packer-plugin-arm-image build /build/build.pkr.hcl
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1
